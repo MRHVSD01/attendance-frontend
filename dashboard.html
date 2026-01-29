@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Attendance Dashboard</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body onload="load()">
+    <div class="container">
+      <!-- Top Bar -->
+      <div class="topbar">
+        <div>
+          <h1>Attendance Dashboard</h1>
+          <p class="subtitle">Semester Attendance Overview</p>
+        </div>
+
+        <button class="reset-btn" onclick="resetAttendance()">
+          Reset Attendance
+        </button>
+      </div>
+
+      <!-- ================= AGGREGATE SECTION ================= -->
+      <section class="aggregate-section">
+        <!-- Left stats -->
+        <div class="aggregate-side left">
+          <div class="stat">
+            <span class="label">Attended</span>
+            <span class="number" id="aggAttended">0</span>
+          </div>
+        </div>
+
+        <!-- Center circle -->
+        <div class="aggregate-center">
+          <div class="circle" id="aggCircle">
+            <span class="percent" id="aggPercent">0</span>
+            <span class="percent-sign">%</span>
+            <span class="circle-label">Overall Attendance</span>
+          </div>
+          <!-- <div class="status-text" id="aggStatus">--</div> -->
+        </div>
+
+        <!-- Right stats -->
+        <div class="aggregate-side right">
+          <div class="stat">
+            <span class="label">Total Classes</span>
+            <span class="number" id="aggTotal">0</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TARGET PLANNING ================= -->
+      <!-- <div class="aggregate-target-bar">
+        <input type="number" id="aggTarget" placeholder="Target %" />
+        <button onclick="calculateAggregateTarget()">Check</button>
+        <span id="aggTargetResult"></span>
+      </div> -->
+
+      <div class="aggregate-target-bar">
+        <div class="target-input">
+          <input type="number" id="aggTarget" placeholder="Target " />
+          <span class="input-suffix">%</span>
+        </div>
+
+        <button onclick="calculateAggregateTarget()">Check</button>
+        <span id="aggTargetResult"></span>
+      </div>
+      <!-- ================= SUBJECT TABLE ================= -->
+      <table id="table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>%</th>
+            <th>Attended</th>
+            <th>Absent</th>
+            <th>Total</th>
+            <th>Safe Miss</th>
+            <th>Simulator</th>
+            <th>Target</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+
+    </div>
+
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-title">Attendance Calculator</div>
+
+        <div class="footer-credit">
+          Designed & Developed by <strong>Harshvardhan Singh Dhannawat</strong>
+        </div>
+
+        <div class="footer-links">
+          <a
+            href="https://www.linkedin.com/in/harshvardhan-singh-dhannawat-694430219/"
+            target="_blank"
+            aria-label="LinkedIn Profile"
+          >
+            <img src="linkedin.svg" alt="LinkedIn" />
+          </a>
+        </div>
+
+        <div class="footer-note">
+          © 2026 • Academic Project
+        </div>
+      </div>
+    </footer>
+
+
+    <script src="script.js"></script>
+  </body>
+</html>

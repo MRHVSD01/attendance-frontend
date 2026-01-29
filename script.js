@@ -1,0 +1,408 @@
+// const API = "http://localhost:5000/api";
+const API = "https://attendance-backend-production-8499.up.railway.app/api";
+
+async function submitData() {
+  const pastedText = document.getElementById("pasteBox").value;
+  const file = document.getElementById("file").files[0];
+
+  if (!pastedText && !file) {
+    alert("Paste ERP report or upload file");
+    return;
+  }
+
+  const formData = new FormData();
+
+  if (pastedText) {
+    formData.append("text", pastedText);
+  } else {
+    formData.append("file", file);
+  }
+
+  await fetch(API + "/upload", {
+    method: "POST",
+    body: formData,
+  });
+
+  window.location.href = "dashboard.html";
+}
+
+// async function load() {
+//   const table = document.getElementById("table");
+
+//   // clear old rows (important for re-render)
+//   table.innerHTML = `
+//     <tr>
+//       <th>Subject</th>
+//       <th>Percentage</th>
+//       <th>Status</th>
+//       <th>Simulator</th>
+//     </tr>
+//   `;
+
+//   const safeMissRes = await fetch(API + "/attendance/safe-miss");
+//   const safeMissData = await safeMissRes.json();
+
+//   const safeMissMap = {};
+//   safeMissData.forEach(s => {
+//     safeMissMap[s._id] = s.safeMiss;
+//   });
+
+
+//   // SUBJECT DATA
+//   const res = await fetch(API + "/attendance");
+//   const data = await res.json();
+
+//   data.forEach((d) => {
+//     const cls =
+//       d.percentage < 65 ? "red" : d.percentage < 75 ? "yellow" : "green";
+
+//     // const row = document.createElement("tr");
+//     const row = document.createElement("tr");
+//     row.dataset.id = d._id;
+
+//     row.className = cls;
+
+//     //     row.innerHTML = `
+//     //   <td>${d.subjectName}</td>
+//     //   <td>${d.percentage}%</td>
+//     //   <td class="action-cell">
+//     //     <button class="action-btn" onclick="simulateAttend('${d._id}')">Attend</button>
+//     //     <button class="action-btn" onclick="simulateMiss('${d._id}')">Miss</button>
+//     //   </td>
+//     //   <td class="target-cell">
+//     //     <div class="target-input-small">
+//     //       <input type="number" id="target-${d._id}" placeholder="%" />
+//     //       <button class="calc-btn" onclick="calculateTarget('${d._id}')">Calc</button>
+//     //     </div>
+//     //     <div class="target-result" id="result-${d._id}"></div>
+//     //   </td>
+//     // `;
+
+//     row.innerHTML = `
+//     <td data-label="Subject">${d.subjectName}</td>
+//     <td data-label="Percentage">${d.percentage}%</td>
+//     <td>${safeMissMap[d._id]}</td>
+//     <td data-label="Simulator" class="action-cell">
+//         <button class="action-btn" onclick="simulateAttend('${d._id}')">Attend</button>
+//         <button class="action-btn" onclick="simulateMiss('${d._id}')">Miss</button>
+//     </td>
+//     <td data-label="Target" class="target-cell">
+//         <div class="target-input-small">
+//         <input type="number" id="target-${d._id}" placeholder="%" />
+//         <button class="calc-btn" onclick="calculateTarget('${d._id}')">Calc</button>
+//         </div>
+//         <div class="target-result" id="result-${d._id}"></div>
+//     </td>
+//     `;
+
+//     table.appendChild(row);
+//   });
+
+//   // AGGREGATE DATA
+//   await loadAggregate();
+// }
+
+async function load() {
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
+
+  // fetch attendance
+  const res = await fetch(API + "/attendance");
+  const data = await res.json();
+
+  // risk priority (frontend enforced)
+  const priority = { RED: 1, YELLOW: 2, GREEN: 3 };
+  data.sort((a, b) => {
+    if (priority[a.riskLevel] !== priority[b.riskLevel]) {
+      return priority[a.riskLevel] - priority[b.riskLevel];
+    }
+    return a.percentage - b.percentage;
+  });
+
+  // // safe miss map
+  // let safeMissMap = {};
+  // try {
+  //   const smRes = await fetch(API + "/attendance/safe-miss");
+  //   const smData = await smRes.json();
+  //   smData.forEach(s => safeMissMap[s._id] = s.safeMiss);
+  // } catch {}
+
+  data.forEach(d => {
+    const row = document.createElement("tr");
+    row.dataset.id = d._id;
+
+    row.classList.add(
+      d.percentage < 65 ? "red" :
+      d.percentage < 75 ? "yellow" :
+      "green"
+    );
+
+    row.innerHTML = `
+      <td data-label="Subject">${d.subjectName}</td>
+      <td data-label="%">${d.percentage}%</td>
+      <td data-label="Attended">${d.attended}</td>
+      <td data-label="Absent">${d.total - d.attended}</td>
+      <td data-label="Total">${d.total}</td>
+      <td data-label="Safe Miss">
+        ${calculateSafeMiss(d.attended, d.total)}
+        <span class="safe-miss-note">classes</span>
+      </td>
+
+      <td data-label="Simulator" class="action-cell">
+        <button class="action-btn" onclick="simulateAttend('${d._id}')">Attend</button>
+        <button class="action-btn" onclick="simulateMiss('${d._id}')">Miss</button>
+      </td>
+      <td data-label="Target" class="target-cell">
+        <div class="target-input-small">
+          <input type="number" id="target-${d._id}" placeholder="%" />
+          <button class="calc-btn" onclick="calculateTarget('${d._id}')">Calc</button>
+        </div>
+        <div class="target-result" id="result-${d._id}"></div>
+      </td>
+    `;
+
+    tbody.appendChild(row);
+  });
+
+  await loadAggregate();
+}
+
+function calculateSafeMiss(attended, total) {
+  const min = 75;
+  let m = Math.floor((100 * attended - min * total) / min);
+  return m < 0 ? 0 : m;
+}
+
+
+
+async function simulateAttend(id) {
+  const res = await fetch(API + "/simulate/attend", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id }),
+  });
+
+  const updated = await res.json();
+  updateRow(updated);
+  updateAggregateOnly();
+}
+
+async function simulateMiss(id) {
+  const res = await fetch(API + "/simulate/miss", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id }),
+  });
+
+  const updated = await res.json();
+  updateRow(updated);
+  updateAggregateOnly();
+}
+
+async function loadAggregate() {
+  const res = await fetch(API + "/attendance/aggregate");
+  const agg = await res.json();
+
+  // Fill values
+  document.getElementById("aggAttended").innerText = agg.totalAttended;
+  document.getElementById("aggTotal").innerText = agg.totalClasses;
+  document.getElementById("aggPercent").innerText = agg.percentage;
+
+  // Reset classes
+  const section = document.querySelector(".aggregate-section");
+  const circle = document.getElementById("aggCircle");
+
+  section.className = "aggregate-section";
+  circle.className = "circle";
+
+  // Apply color by risk
+  if (agg.riskLevel === "GREEN") {
+    section.classList.add("agg-green");
+    circle.classList.add("green");
+  } else if (agg.riskLevel === "YELLOW") {
+    section.classList.add("agg-yellow");
+    circle.classList.add("yellow");
+  } else {
+    section.classList.add("agg-red");
+    circle.classList.add("red");
+  }
+}
+
+async function calculateAggregateTarget() {
+  const target = Number(document.getElementById("aggTarget").value);
+
+  if (!target) {
+    alert("Enter target percentage");
+    return;
+  }
+
+  const res = await fetch(API + "/target/aggregate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ target }),
+  });
+
+  const data = await res.json();
+  const box = document.getElementById("aggTargetResult");
+
+  if (data.type === "invalid") {
+    box.innerText = "Not achievable";
+    box.style.color = "red";
+  } else if (data.type === "attend") {
+    box.innerText = `Attend ${data.value} more classes to reach ${target}%`;
+    box.style.color = "blue";
+  } else if (data.type === "miss") {
+    box.innerText = `You can safely miss ${data.value} classes and maintain ${target}%`;
+    box.style.color = "green";
+  }
+}
+
+async function resetAttendance() {
+  const confirmReset = confirm(
+    "This will reset attendance to the originally uploaded data. Continue?"
+  );
+
+  if (!confirmReset) return;
+
+  await fetch(API + "/attendance/reset", {
+    method: "POST",
+  });
+
+  await load();
+}
+
+
+// function updateRow(d) {
+//   const rows = document.querySelectorAll("#table tr");
+
+//   rows.forEach(row => {
+//     if (row.dataset.id === d._id) {
+
+//       // Percentage (col 1)
+//       row.children[1].innerText = `${d.percentage}%`;
+
+//       // Safe miss (col 2)
+//       const min = 75;
+//       let m = Math.floor((100 * d.attended - min * d.total) / min);
+//       if (m < 0) m = 0;
+//       row.children[2].innerText = m;
+
+//       // Update color
+//       row.classList.remove("red", "yellow", "green");
+//       row.classList.add(
+//         d.percentage < 65 ? "red" :
+//         d.percentage < 75 ? "yellow" :
+//         "green"
+//       );
+//     }
+//   });
+// }
+
+function updateRow(d) {
+  const rows = document.querySelectorAll("#tableBody tr");
+
+  rows.forEach(row => {
+    if (row.dataset.id === d._id) {
+
+      row.children[1].innerText = `${d.percentage}%`;
+      row.children[2].innerText = d.attended;
+      row.children[3].innerText = d.total - d.attended;
+      row.children[4].innerText = d.total;
+
+      // const min = 75;
+      // let m = Math.floor((100 * d.attended - min * d.total) / min);
+      // if (m < 0) m = 0;
+      // row.children[5].innerText = m;
+
+      row.children[5].innerText = calculateSafeMiss(d.attended, d.total);
+
+
+      row.classList.remove("red", "yellow", "green");
+      row.classList.add(
+        d.percentage < 65 ? "red" :
+        d.percentage < 75 ? "yellow" :
+        "green"
+      );
+    }
+  });
+}
+
+
+async function updateAggregateOnly() {
+  const res = await fetch(API + "/attendance/aggregate");
+  const agg = await res.json();
+
+  document.getElementById("aggAttended").innerText = agg.totalAttended;
+  document.getElementById("aggTotal").innerText = agg.totalClasses;
+  document.getElementById("aggPercent").innerText = agg.percentage;
+
+  const section = document.querySelector(".aggregate-section");
+  const circle = document.getElementById("aggCircle");
+
+  section.className = "aggregate-section";
+  circle.className = "circle";
+
+  if (agg.riskLevel === "GREEN") {
+    section.classList.add("agg-green");
+    circle.classList.add("green");
+  } else if (agg.riskLevel === "YELLOW") {
+    section.classList.add("agg-yellow");
+    circle.classList.add("yellow");
+  } else {
+    section.classList.add("agg-red");
+    circle.classList.add("red");
+  }
+}
+
+function calculateTarget(id) {
+  const input = document.getElementById(`target-${id}`);
+  const resultBox = document.getElementById(`result-${id}`);
+
+  if (!input || !resultBox) return;
+
+  const target = Number(input.value);
+  if (!target || target <= 0) {
+    resultBox.innerText = "Enter valid %";
+    return;
+  }
+
+  if (target >= 100) {
+    resultBox.innerText = "Not achievable";
+    return;
+  }
+
+  // get current row values
+  const row = document.querySelector(`tr[data-id="${id}"]`);
+  if (!row) return;
+
+  const attended = Number(row.children[2].innerText);
+  const total = Number(row.children[4].innerText);
+
+  const currentPercent = (attended / total) * 100;
+
+  // 🎯 CASE 1: Need to ATTEND more classes
+  if (target > currentPercent) {
+    const k = Math.ceil(
+      ((target * total) - (100 * attended)) / (100 - target)
+    );
+
+    resultBox.innerText =
+      k <= 0 ? "Already safe" : `Attend ${k} more classes`;
+    return;
+  }
+
+  // 🎯 CASE 2: Can MISS classes safely
+  if (target < currentPercent) {
+    let m = Math.floor((100 * attended - target * total) / target);
+    if (m < 0) m = 0;
+
+    resultBox.innerText =
+      m === 0
+        ? "Do not miss further"
+        : `Can miss ${m} classes`;
+    return;
+  }
+
+  // 🎯 CASE 3: Exactly at target
+  resultBox.innerText = "Exactly at target";
+}

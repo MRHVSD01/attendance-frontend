@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Attendance Calculator</title>
+
+    <!-- Font (same as dashboard) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="topbar">
+        <div>
+          <h1>Attendance Calculator</h1>
+          <p class="subtitle">Upload or paste your ERP attendance report</p>
+        </div>
+      </div>
+
+      <!-- Main Upload Card -->
+      <section class="upload-card">
+        <h2>Upload Attendance Report</h2>
+
+        <p class="instruction">
+          You can either <strong>paste</strong> the attendance report copied
+          from ERP or <strong>upload</strong> the official CSV file.
+        </p>
+
+        <!-- Paste Box -->
+        <label class="section-label">Paste ERP Attendance Report</label>
+        <textarea
+          id="pasteBox"
+          placeholder="Paste the attendance report here..."
+        ></textarea>
+
+        <div class="divider">OR</div>
+
+        <!-- File Upload -->
+        <label class="section-label">Upload CSV File</label>
+        <input type="file" id="file" accept=".csv" />
+
+        <!-- Action Button -->
+        <button class="primary-btn" onclick="submitData()">
+          Process Attendance
+        </button>
+
+        <p class="note">Only official ERP attendance format is supported.</p>
+      </section>
+    </div>
+    
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-title">Attendance Calculator</div>
+
+        <div class="footer-credit">
+          Designed & Developed by <strong>Harshvardhan Singh Dhannawat</strong>
+        </div>
+
+        <div class="footer-links">
+          <a
+            href="https://www.linkedin.com/in/harshvardhan-singh-dhannawat-694430219/"
+            target="_blank"
+            aria-label="LinkedIn Profile"
+          >
+            <img src="linkedin.svg" alt="LinkedIn" />
+          </a>
+        </div>
+
+        <div class="footer-note">
+          © 2026 • Academic Project
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
