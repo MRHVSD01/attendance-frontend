@@ -136,14 +136,31 @@ function calculateSafeMiss(attended, total) {
 //   await loadAggregate();
 // }
 
+// async function simulateAttend(id) {
+//   await fetch(API + "/simulate/attend", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ sessionId, subjectId: id }),
+//   });
+
+//   // 🔥 SINGLE SOURCE OF TRUTH
+//   const data = await res.json();
+
+//   updateSubjectRow(data.subject);
+//   updateAggregateUI(data.aggregate);
+// }
 async function simulateAttend(id) {
-  await fetch(API + "/simulate/attend", {
+  const res = await fetch(API + "/simulate/attend", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sessionId, subjectId: id }),
   });
 
-  // 🔥 SINGLE SOURCE OF TRUTH
+  if (!res.ok) {
+    console.error("Simulate attend failed");
+    return;
+  }
+
   const data = await res.json();
 
   updateSubjectRow(data.subject);
@@ -163,14 +180,33 @@ async function simulateAttend(id) {
 //   await loadAggregate();
 // }
 
+// async function simulateMiss(id) {
+//   await fetch(API + "/simulate/miss", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ sessionId, subjectId: id }),
+//   });
+
+//   // 🔥 RELOAD FROM DB
+//   const data = await res.json();
+
+//   updateSubjectRow(data.subject);
+//   updateAggregateUI(data.aggregate);
+// }
+
+
 async function simulateMiss(id) {
-  await fetch(API + "/simulate/miss", {
+  const res = await fetch(API + "/simulate/miss", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sessionId, subjectId: id }),
   });
 
-  // 🔥 RELOAD FROM DB
+  if (!res.ok) {
+    console.error("Simulate miss failed");
+    return;
+  }
+
   const data = await res.json();
 
   updateSubjectRow(data.subject);
