@@ -89,8 +89,8 @@ async function load() {
       </td>
 
       <td data-label="Simulator" class="action-cell">
-        <button class="action-btn" onclick="simulateAttend()">Attend</button>
-        <button class="action-btn" onclick="simulateMiss()">Miss</button>
+        <button class="action-btn" onclick="simulateAttend(${d._id})">Attend</button>
+        <button class="action-btn" onclick="simulateMiss(${d._id})">Miss</button>
       </td>
       <td data-label="Target" class="target-cell">
         <div class="target-input-small">
@@ -127,7 +127,7 @@ function calculateSafeMiss(attended, total) {
 //   await loadAggregate();
 // }
 
-async function simulateAttend() {
+async function simulateAttend(id) {
   await fetch(API + "/simulate/attend", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -154,7 +154,7 @@ async function simulateAttend() {
 //   await loadAggregate();
 // }
 
-async function simulateMiss() {
+async function simulateMiss(id) {
   await fetch(API + "/simulate/miss", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
