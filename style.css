@@ -551,42 +551,45 @@ tbody td {
 }
 
 /* ===== What-if INLINE ===== */
-.whatif-inline {
+/* ===== Aggregate What-if (MATCH EXISTING UI) ===== */
+.aggregate-whatif {
   margin-top: 14px;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
-.whatif-inline input,
-.whatif-inline select {
-  padding: 6px 8px;
-  font-size: 13px;
-  border-radius: 6px;
+.whatif-select {
+  padding: 8px 10px;
+  font-size: 14px;
   border: 1px solid #cbd5f5;
+  border-radius: 6px;
   outline: none;
+  background: white;
 }
 
-.whatif-inline button {
+.whatif-btn {
   background: #1e40af;
   color: white;
   border: none;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
 }
 
-#whatIfResult {
-  width: 100%;
-  margin-top: 6px;
-  font-size: 13px;
-  color: #374151;
-  text-align: center;
+.whatif-btn:hover {
+  background: #1c3aa9;
 }
 
+.whatif-result {
+  margin-top: 8px;
+  font-size: 14px;
+  text-align: center;
+  color: #374151;
+}
 
 
 /* ================= MOBILE RESPONSIVE ================= */

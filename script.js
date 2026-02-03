@@ -479,7 +479,7 @@ function updateMaintain75(agg) {
   const target = 75;
 
   const box = document.getElementById("maintainText");
-
+  if (!box) return; // prevents silent failure
   if (T === 0) {
     box.innerText = "No attendance data";
     return;
@@ -497,6 +497,31 @@ function updateMaintain75(agg) {
   }
 }
 
+// function calculateWhatIf() {
+//   const x = Number(document.getElementById("whatIfCount").value);
+//   const type = document.getElementById("whatIfType").value;
+//   const result = document.getElementById("whatIfResult");
+
+//   if (!x || x <= 0) {
+//     result.innerText = "Enter valid number of classes";
+//     return;
+//   }
+
+//   const A = Number(document.getElementById("aggAttended").innerText);
+//   const T = Number(document.getElementById("aggTotal").innerText);
+
+//   let newA = A;
+//   let newT = T + x;
+
+//   if (type === "attend") {
+//     newA += x;
+//   }
+
+//   const percent = ((newA / newT) * 100).toFixed(2);
+
+//   result.innerText = `Resulting Attendance: ${percent}%`;
+// }
+
 function calculateWhatIf() {
   const x = Number(document.getElementById("whatIfCount").value);
   const type = document.getElementById("whatIfType").value;
@@ -513,11 +538,10 @@ function calculateWhatIf() {
   let newA = A;
   let newT = T + x;
 
-  if (type === "attend") {
-    newA += x;
-  }
+  if (type === "attend") newA += x;
 
   const percent = ((newA / newT) * 100).toFixed(2);
 
   result.innerText = `Resulting Attendance: ${percent}%`;
+  result.style.color = percent >= 75 ? "#166534" : "#dc2626";
 }

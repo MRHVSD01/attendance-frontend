@@ -48,15 +48,23 @@
           </div>
 
           <!-- ===== What-if Simulation (INLINE) ===== -->
-          <div class="whatif-inline">
-            <input type="number" id="whatIfCount" placeholder="Classes" />
-            <select id="whatIfType">
+          <div class="aggregate-whatif">
+            <div class="target-input">
+              <input type="number" id="whatIfCount" placeholder="Classes" />
+              <span class="input-suffix">#</span>
+            </div>
+
+            <select id="whatIfType" class="whatif-select">
               <option value="attend">Attend</option>
               <option value="miss">Miss</option>
             </select>
-            <button onclick="calculateWhatIf()">Check</button>
-            <div id="whatIfResult"></div>
+
+            <button class="whatif-btn" onclick="calculateWhatIf()">Check</button>
           </div>
+
+          <div id="whatIfResult" class="whatif-result"></div>
+
+
         </div>
 
 
