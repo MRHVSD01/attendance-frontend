@@ -42,22 +42,21 @@
             <span class="percent-sign">%</span>
             <span class="circle-label">Overall Attendance</span>
           </div>
-          <!-- <div class="status-text" id="aggStatus">--</div> -->
-        </div>
-        <!-- ===== Maintain 75% Block ===== -->
-        <div class="maintain-box" id="maintainBox">
-          <span id="maintainText">--</span>
-        </div>
-        <!-- ===== What-If Simulator ===== -->
-        <div class="whatif-box">
-          <input type="number" id="whatIfCount" placeholder="Classes" />
-          <select id="whatIfType">
-            <option value="attend">Attend</option>
-            <option value="miss">Miss</option>
-          </select>
-          <button onclick="calculateWhatIf()">Check</button>
+          <!-- ===== Maintain 75% (INLINE, NATIVE) ===== -->
+          <div class="maintain-inline">
+            <span id="maintainText">--</span>
+          </div>
 
-          <div id="whatIfResult"></div>
+          <!-- ===== What-if Simulation (INLINE) ===== -->
+          <div class="whatif-inline">
+            <input type="number" id="whatIfCount" placeholder="Classes" />
+            <select id="whatIfType">
+              <option value="attend">Attend</option>
+              <option value="miss">Miss</option>
+            </select>
+            <button onclick="calculateWhatIf()">Check</button>
+            <div id="whatIfResult"></div>
+          </div>
         </div>
 
 

@@ -533,34 +533,60 @@ tbody td {
   color: #374151;
 }
 
-
-/* for global 75 % display */
-.maintain-box {
-  margin: 16px auto;
-  padding: 12px 18px;
-  max-width: 420px;
-  border-radius: 10px;
-  background: #f5f7ff;
+/* ===== Maintain 75% INLINE ===== */
+.maintain-inline {
+  margin-top: 12px;
+  font-size: 14px;
   font-weight: 500;
-  text-align: center;
-  font-size: 15px;
+  color: #065f46;
 }
 
-/* for global simulation */
-.whatif-box {
-  margin: 18px auto;
-  padding: 14px;
-  max-width: 420px;
-  background: #eef3ff;
-  border-radius: 10px;
+/* Change color automatically with aggregate */
+.aggregate-section.agg-red .maintain-inline {
+  color: #991b1b;
+}
+
+.aggregate-section.agg-yellow .maintain-inline {
+  color: #92400e;
+}
+
+/* ===== What-if INLINE ===== */
+.whatif-inline {
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.whatif-inline input,
+.whatif-inline select {
+  padding: 6px 8px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid #cbd5f5;
+  outline: none;
+}
+
+.whatif-inline button {
+  background: #1e40af;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#whatIfResult {
+  width: 100%;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #374151;
   text-align: center;
 }
 
-.whatif-box input,
-.whatif-box select {
-  padding: 6px;
-  margin: 4px;
-}
 
 
 /* ================= MOBILE RESPONSIVE ================= */
