@@ -593,6 +593,7 @@ function updateAggregateUI(agg) {
 // }
 
 function updateMaintain75(agg) {
+  console.log("Maintain 75 called", agg);
   const box = document.getElementById("maintainText");
   if (!box) return;
 
