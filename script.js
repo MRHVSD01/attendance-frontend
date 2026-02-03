@@ -115,28 +115,51 @@ function calculateSafeMiss(attended, total) {
 
 
 
-async function simulateAttend(id) {
-  const res = await fetch(API + "/simulate/attend", {
+// async function simulateAttend(id) {
+//   const res = await fetch(API + "/simulate/attend", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ sessionId }),
+//   });
+
+//   const updated = await res.json();
+//   updateRow(updated);
+//   await loadAggregate();
+// }
+
+async function simulateAttend() {
+  await fetch(API + "/simulate/attend", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sessionId }),
   });
 
-  const updated = await res.json();
-  updateRow(updated);
-  await loadAggregate();
+  // 🔥 SINGLE SOURCE OF TRUTH
+  await load();
 }
 
-async function simulateMiss(id) {
-  const res = await fetch(API + "/simulate/miss", {
+
+// async function simulateMiss(id) {
+//   const res = await fetch(API + "/simulate/miss", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ sessionId }),
+//   });
+
+//   const updated = await res.json();
+//   updateRow(updated);
+//   await loadAggregate();
+// }
+
+async function simulateMiss() {
+  await fetch(API + "/simulate/miss", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sessionId }),
   });
 
-  const updated = await res.json();
-  updateRow(updated);
-  await loadAggregate();
+  // 🔥 RELOAD FROM DB
+  await load();
 }
 
 async function loadAggregate() {
@@ -247,34 +270,34 @@ async function resetAttendance() {
 }
 
 
-function updateRow(d) {
-  const rows = document.querySelectorAll("#tableBody tr");
+// function updateRow(d) {
+//   const rows = document.querySelectorAll("#tableBody tr");
 
-  rows.forEach(row => {
-    if (row.dataset.id === d._id) {
+//   rows.forEach(row => {
+//     if (row.dataset.id === d._id) {
 
-      row.children[1].innerText = `${d.percentage}%`;
-      row.children[2].innerText = d.attended;
-      row.children[3].innerText = d.total - d.attended;
-      row.children[4].innerText = d.total;
+//       row.children[1].innerText = `${d.percentage}%`;
+//       row.children[2].innerText = d.attended;
+//       row.children[3].innerText = d.total - d.attended;
+//       row.children[4].innerText = d.total;
 
-      // const min = 75;
-      // let m = Math.floor((100 * d.attended - min * d.total) / min);
-      // if (m < 0) m = 0;
-      // row.children[5].innerText = m;
+//       // const min = 75;
+//       // let m = Math.floor((100 * d.attended - min * d.total) / min);
+//       // if (m < 0) m = 0;
+//       // row.children[5].innerText = m;
 
-      row.children[5].innerText = calculateSafeMiss(d.attended, d.total);
+//       row.children[5].innerText = calculateSafeMiss(d.attended, d.total);
 
 
-      row.classList.remove("red", "yellow", "green");
-      row.classList.add(
-        d.percentage < 65 ? "red" :
-        d.percentage < 75 ? "yellow" :
-        "green"
-      );
-    }
-  });
-}
+//       row.classList.remove("red", "yellow", "green");
+//       row.classList.add(
+//         d.percentage < 65 ? "red" :
+//         d.percentage < 75 ? "yellow" :
+//         "green"
+//       );
+//     }
+//   });
+// }
 
 
 // async function updateAggregateOnly() {
