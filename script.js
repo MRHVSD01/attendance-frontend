@@ -470,4 +470,54 @@ function updateAggregateUI(agg) {
     section.classList.add("agg-red");
     circle.classList.add("red");
   }
+  updateMaintain75(agg);
+}
+
+function updateMaintain75(agg) {
+  const A = agg.attended;
+  const T = agg.total;
+  const target = 75;
+
+  const box = document.getElementById("maintainText");
+
+  if (T === 0) {
+    box.innerText = "No attendance data";
+    return;
+  }
+
+  const current = (A / T) * 100;
+
+  if (current < target) {
+    const need = Math.ceil((target * T - 100 * A) / (100 - target));
+    box.innerText = `Attend ${need} more classes to maintain 75%`;
+  } else {
+    let canMiss = Math.floor((100 * A - target * T) / target);
+    if (canMiss < 0) canMiss = 0;
+    box.innerText = `You can safely miss ${canMiss} classes`;
+  }
+}
+
+function calculateWhatIf() {
+  const x = Number(document.getElementById("whatIfCount").value);
+  const type = document.getElementById("whatIfType").value;
+  const result = document.getElementById("whatIfResult");
+
+  if (!x || x <= 0) {
+    result.innerText = "Enter valid number of classes";
+    return;
+  }
+
+  const A = Number(document.getElementById("aggAttended").innerText);
+  const T = Number(document.getElementById("aggTotal").innerText);
+
+  let newA = A;
+  let newT = T + x;
+
+  if (type === "attend") {
+    newA += x;
+  }
+
+  const percent = ((newA / newT) * 100).toFixed(2);
+
+  result.innerText = `Resulting Attendance: ${percent}%`;
 }
