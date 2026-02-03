@@ -119,7 +119,7 @@ async function simulateAttend(id) {
   const res = await fetch(API + "/simulate/attend", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id }),
+    body: JSON.stringify({ sessionId }),
   });
 
   const updated = await res.json();
@@ -131,7 +131,7 @@ async function simulateMiss(id) {
   const res = await fetch(API + "/simulate/miss", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id }),
+    body: JSON.stringify({ sessionId }),
   });
 
   const updated = await res.json();
@@ -145,8 +145,10 @@ async function loadAggregate() {
   const agg = await res.json();
 
   // Fill values
-  document.getElementById("aggAttended").innerText = agg.totalAttended;
-  document.getElementById("aggTotal").innerText = agg.totalClasses;
+  // document.getElementById("aggAttended").innerText = agg.totalAttended;
+  // document.getElementById("aggTotal").innerText = agg.totalClasses;
+  document.getElementById("aggAttended").innerText = agg.attended;
+  document.getElementById("aggTotal").innerText = agg.total;
   document.getElementById("aggPercent").innerText = agg.percentage;
 
   // Reset classes
@@ -181,6 +183,7 @@ async function calculateAggregateTarget() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ target }),
+    body: JSON.stringify({ sessionId }),
   });
 
   const data = await res.json();
