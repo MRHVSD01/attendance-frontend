@@ -1,3 +1,12 @@
+// ===== Session Handling =====
+let sessionId = localStorage.getItem("attendance_session");
+
+if (!sessionId) {
+  sessionId = crypto.randomUUID();
+  localStorage.setItem("attendance_session", sessionId);
+}
+
+
 // const API = "http://localhost:5000/api";
 const API = "https://attendance-backend-production-8499.up.railway.app/api";
 
@@ -17,11 +26,18 @@ async function submitData() {
   } else {
     formData.append("file", file);
   }
+  
+  // await fetch(API + "/upload", {
+  //   method: "POST",
+  //   body: formData,
+  // });
 
+  formData.append("sessionId", sessionId);
   await fetch(API + "/upload", {
     method: "POST",
-    body: formData,
+    body: formData
   });
+
 
   window.location.href = "dashboard.html";
 }
@@ -107,7 +123,8 @@ async function load() {
   tbody.innerHTML = "";
 
   // fetch attendance
-  const res = await fetch(API + "/attendance");
+  // const res = await fetch(API + "/attendance");
+  const res = await fetch(`${API}/attendance?sessionId=${sessionId}`);
   const data = await res.json();
 
   // risk priority (frontend enforced)
