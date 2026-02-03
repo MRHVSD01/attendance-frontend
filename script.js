@@ -4,7 +4,6 @@ let sessionId = localStorage.getItem("attendance_session");
 let originalAggregate = null;
 let simulatedAggregate = null;
 
-
 if (!sessionId) {
   sessionId = crypto.randomUUID();
   localStorage.setItem("attendance_session", sessionId);
@@ -12,6 +11,37 @@ if (!sessionId) {
 
 // const API = "http://localhost:5000/api";
 const API = "https://attendance-backend-production-8499.up.railway.app/api";
+
+// async function submitData() {
+//   const pastedText = document.getElementById("pasteBox").value;
+//   const file = document.getElementById("file").files[0];
+
+//   if (!pastedText && !file) {
+//     alert("Paste ERP report or upload file");
+//     return;
+//   }
+
+//   const formData = new FormData();
+
+//   if (pastedText) {
+//     formData.append("text", pastedText);
+//   } else {
+//     formData.append("file", file);
+//   }
+
+//   // await fetch(API + "/upload", {
+//   //   method: "POST",
+//   //   body: formData,
+//   // });
+
+//   formData.append("sessionId", sessionId);
+//   await fetch(API + "/upload", {
+//     method: "POST",
+//     body: formData
+//   });
+
+//   window.location.href = "dashboard.html";
+// }
 
 async function submitData() {
   const pastedText = document.getElementById("pasteBox").value;
@@ -22,6 +52,14 @@ async function submitData() {
     return;
   }
 
+  // 🔥 SHOW LOADER
+  document.getElementById("loader").classList.remove("hidden");
+
+  // Disable button to prevent double click
+  const btn = document.querySelector(".primary-btn");
+  btn.disabled = true;
+  btn.innerText = "Processing...";
+
   const formData = new FormData();
 
   if (pastedText) {
@@ -29,20 +67,25 @@ async function submitData() {
   } else {
     formData.append("file", file);
   }
-  
-  // await fetch(API + "/upload", {
-  //   method: "POST",
-  //   body: formData,
-  // });
 
   formData.append("sessionId", sessionId);
-  await fetch(API + "/upload", {
-    method: "POST",
-    body: formData
-  });
 
+  try {
+    await fetch(API + "/upload", {
+      method: "POST",
+      body: formData,
+    });
 
-  window.location.href = "dashboard.html";
+    // Redirect after successful upload
+    window.location.href = "dashboard.html";
+  } catch (err) {
+    alert("Something went wrong. Please try again.");
+
+    // Restore UI if error
+    document.getElementById("loader").classList.add("hidden");
+    btn.disabled = false;
+    btn.innerText = "Process Attendance";
+  }
 }
 
 async function load() {
@@ -71,14 +114,12 @@ async function load() {
   //   smData.forEach(s => safeMissMap[s._id] = s.safeMiss);
   // } catch {}
 
-  data.forEach(d => {
+  data.forEach((d) => {
     const row = document.createElement("tr");
     row.dataset.id = d._id;
 
     row.classList.add(
-      d.percentage < 65 ? "red" :
-      d.percentage < 75 ? "yellow" :
-      "green"
+      d.percentage < 65 ? "red" : d.percentage < 75 ? "yellow" : "green",
     );
 
     row.innerHTML = `
@@ -114,7 +155,6 @@ async function load() {
     row.querySelector(".miss-btn").addEventListener("click", () => {
       simulateMiss(d._id);
     });
-
   });
 
   await loadAggregate();
@@ -125,8 +165,6 @@ function calculateSafeMiss(attended, total) {
   let m = Math.floor((100 * attended - min * total) / min);
   return m < 0 ? 0 : m;
 }
-
-
 
 // async function simulateAttend(id) {
 //   const res = await fetch(API + "/simulate/attend", {
@@ -171,7 +209,6 @@ async function simulateAttend(id) {
   updateAggregateUI(data.aggregate);
 }
 
-
 // async function simulateMiss(id) {
 //   const res = await fetch(API + "/simulate/miss", {
 //     method: "POST",
@@ -197,7 +234,6 @@ async function simulateAttend(id) {
 //   updateSubjectRow(data.subject);
 //   updateAggregateUI(data.aggregate);
 // }
-
 
 async function simulateMiss(id) {
   const res = await fetch(API + "/simulate/miss", {
@@ -287,7 +323,7 @@ async function loadAggregate() {
     attended: agg.attended,
     total: agg.total,
     percentage: agg.percentage,
-    riskLevel: agg.riskLevel
+    riskLevel: agg.riskLevel,
   };
 
   // initialize simulated state
@@ -295,7 +331,6 @@ async function loadAggregate() {
 
   updateAggregateUI(simulatedAggregate);
 }
-
 
 async function calculateAggregateTarget() {
   const target = Number(document.getElementById("aggTarget").value);
@@ -325,7 +360,6 @@ async function calculateAggregateTarget() {
   }
 }
 
-
 // async function resetAttendance() {
 //   const confirmReset = confirm(
 //     "This will reset attendance to the originally uploaded data. Continue?"
@@ -339,10 +373,8 @@ async function calculateAggregateTarget() {
 //     body: JSON.stringify({ sessionId }),
 //   });
 
-
 //   await load();
 // }
-
 
 // function updateRow(d) {
 //   const rows = document.querySelectorAll("#tableBody tr");
@@ -362,7 +394,6 @@ async function calculateAggregateTarget() {
 
 //       row.children[5].innerText = calculateSafeMiss(d.attended, d.total);
 
-
 //       row.classList.remove("red", "yellow", "green");
 //       row.classList.add(
 //         d.percentage < 65 ? "red" :
@@ -372,7 +403,6 @@ async function calculateAggregateTarget() {
 //     }
 //   });
 // }
-
 
 // async function updateAggregateOnly() {
 //   // const res = await fetch(API + "/attendance/aggregate");
@@ -403,7 +433,7 @@ async function calculateAggregateTarget() {
 
 async function resetAttendance() {
   const confirmReset = confirm(
-    "This will reset attendance to the originally uploaded data. Continue?"
+    "This will reset attendance to the originally uploaded data. Continue?",
   );
 
   if (!confirmReset) return;
@@ -420,7 +450,6 @@ async function resetAttendance() {
 
   await load();
 }
-
 
 function calculateTarget(id) {
   const input = document.getElementById(`target-${id}`);
@@ -450,12 +479,9 @@ function calculateTarget(id) {
 
   // 🎯 CASE 1: Need to ATTEND more classes
   if (target > currentPercent) {
-    const k = Math.ceil(
-      ((target * total) - (100 * attended)) / (100 - target)
-    );
+    const k = Math.ceil((target * total - 100 * attended) / (100 - target));
 
-    resultBox.innerText =
-      k <= 0 ? "Already safe" : `Attend ${k} more classes`;
+    resultBox.innerText = k <= 0 ? "Already safe" : `Attend ${k} more classes`;
     return;
   }
 
@@ -465,9 +491,7 @@ function calculateTarget(id) {
     if (m < 0) m = 0;
 
     resultBox.innerText =
-      m === 0
-        ? "Do not miss further"
-        : `Can miss ${m} classes`;
+      m === 0 ? "Do not miss further" : `Can miss ${m} classes`;
     return;
   }
 
@@ -487,9 +511,7 @@ function updateSubjectRow(d) {
 
   row.className = "";
   row.classList.add(
-    d.percentage < 65 ? "red" :
-    d.percentage < 75 ? "yellow" :
-    "green"
+    d.percentage < 65 ? "red" : d.percentage < 75 ? "yellow" : "green",
   );
 }
 
@@ -617,7 +639,6 @@ function updateMaintain75(agg) {
   }
 }
 
-
 // function calculateWhatIf() {
 //   const x = Number(document.getElementById("whatIfCount").value);
 //   const type = document.getElementById("whatIfType").value;
@@ -658,7 +679,7 @@ function calculateWhatIf() {
   }
 
   simulatedAggregate.percentage = Number(
-    ((simulatedAggregate.attended / simulatedAggregate.total) * 100).toFixed(2)
+    ((simulatedAggregate.attended / simulatedAggregate.total) * 100).toFixed(2),
   );
 
   updateAggregateUI(simulatedAggregate);

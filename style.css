@@ -591,6 +591,37 @@ tbody td {
   color: #374151;
 }
 
+/* ===== Loader ===== */
+.loader {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #1e40af;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.loader.hidden {
+  display: none;
+}
+
+/* Spinner */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #cbd5f5;
+  border-top: 3px solid #1e40af;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 
 /* ================= MOBILE RESPONSIVE ================= */
 @media (max-width: 768px) {

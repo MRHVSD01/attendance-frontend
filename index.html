@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -49,11 +49,15 @@
         <button class="primary-btn" onclick="submitData()">
           Process Attendance
         </button>
+        <!-- Loader -->
+        <div id="loader" class="loader hidden">
+          <div class="spinner"></div>
+          <span>Processing attendance…</span>
+        </div>
 
         <p class="note">Only official ERP attendance format is supported.</p>
       </section>
     </div>
-    
 
     <footer class="footer">
       <div class="footer-content">
@@ -73,9 +77,7 @@
           </a>
         </div>
 
-        <div class="footer-note">
-          © 2026 • Academic Project
-        </div>
+        <div class="footer-note">© 2026 • Academic Project</div>
       </div>
     </footer>
 
