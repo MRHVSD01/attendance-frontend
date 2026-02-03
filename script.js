@@ -131,11 +131,14 @@ async function simulateAttend() {
   await fetch(API + "/simulate/attend", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sessionId }),
+    body: JSON.stringify({ sessionId, subjectId: id }),
   });
 
   // 🔥 SINGLE SOURCE OF TRUTH
-  await load();
+  const data = await res.json();
+
+  updateSubjectRow(data.subject);
+  updateAggregateUI(data.aggregate);
 }
 
 
@@ -155,11 +158,14 @@ async function simulateMiss() {
   await fetch(API + "/simulate/miss", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sessionId }),
+    body: JSON.stringify({ sessionId, subjectId: id }),
   });
 
   // 🔥 RELOAD FROM DB
-  await load();
+  const data = await res.json();
+
+  updateSubjectRow(data.subject);
+  updateAggregateUI(data.aggregate);
 }
 
 async function loadAggregate() {
@@ -380,4 +386,43 @@ function calculateTarget(id) {
   resultBox.innerText = "Exactly at target";
 }
 
+function updateSubjectRow(d) {
+  const row = document.querySelector(`tr[data-id="${d._id}"]`);
+  if (!row) return;
 
+  row.children[1].innerText = `${d.percentage}%`;
+  row.children[2].innerText = d.attended;
+  row.children[3].innerText = d.total - d.attended;
+  row.children[4].innerText = d.total;
+  row.children[5].innerText = calculateSafeMiss(d.attended, d.total);
+
+  row.className = "";
+  row.classList.add(
+    d.percentage < 65 ? "red" :
+    d.percentage < 75 ? "yellow" :
+    "green"
+  );
+}
+
+function updateAggregateUI(agg) {
+  document.getElementById("aggAttended").innerText = agg.attended;
+  document.getElementById("aggTotal").innerText = agg.total;
+  document.getElementById("aggPercent").innerText = agg.percentage;
+
+  const section = document.querySelector(".aggregate-section");
+  const circle = document.getElementById("aggCircle");
+
+  section.className = "aggregate-section";
+  circle.className = "circle";
+
+  if (agg.riskLevel === "GREEN") {
+    section.classList.add("agg-green");
+    circle.classList.add("green");
+  } else if (agg.riskLevel === "YELLOW") {
+    section.classList.add("agg-yellow");
+    circle.classList.add("yellow");
+  } else {
+    section.classList.add("agg-red");
+    circle.classList.add("red");
+  }
+}
