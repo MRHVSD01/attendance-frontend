@@ -6,7 +6,6 @@ if (!sessionId) {
   localStorage.setItem("attendance_session", sessionId);
 }
 
-
 // const API = "http://localhost:5000/api";
 const API = "https://attendance-backend-production-8499.up.railway.app/api";
 
@@ -41,82 +40,6 @@ async function submitData() {
 
   window.location.href = "dashboard.html";
 }
-
-// async function load() {
-//   const table = document.getElementById("table");
-
-//   // clear old rows (important for re-render)
-//   table.innerHTML = `
-//     <tr>
-//       <th>Subject</th>
-//       <th>Percentage</th>
-//       <th>Status</th>
-//       <th>Simulator</th>
-//     </tr>
-//   `;
-
-//   const safeMissRes = await fetch(API + "/attendance/safe-miss");
-//   const safeMissData = await safeMissRes.json();
-
-//   const safeMissMap = {};
-//   safeMissData.forEach(s => {
-//     safeMissMap[s._id] = s.safeMiss;
-//   });
-
-
-//   // SUBJECT DATA
-//   const res = await fetch(API + "/attendance");
-//   const data = await res.json();
-
-//   data.forEach((d) => {
-//     const cls =
-//       d.percentage < 65 ? "red" : d.percentage < 75 ? "yellow" : "green";
-
-//     // const row = document.createElement("tr");
-//     const row = document.createElement("tr");
-//     row.dataset.id = d._id;
-
-//     row.className = cls;
-
-//     //     row.innerHTML = `
-//     //   <td>${d.subjectName}</td>
-//     //   <td>${d.percentage}%</td>
-//     //   <td class="action-cell">
-//     //     <button class="action-btn" onclick="simulateAttend('${d._id}')">Attend</button>
-//     //     <button class="action-btn" onclick="simulateMiss('${d._id}')">Miss</button>
-//     //   </td>
-//     //   <td class="target-cell">
-//     //     <div class="target-input-small">
-//     //       <input type="number" id="target-${d._id}" placeholder="%" />
-//     //       <button class="calc-btn" onclick="calculateTarget('${d._id}')">Calc</button>
-//     //     </div>
-//     //     <div class="target-result" id="result-${d._id}"></div>
-//     //   </td>
-//     // `;
-
-//     row.innerHTML = `
-//     <td data-label="Subject">${d.subjectName}</td>
-//     <td data-label="Percentage">${d.percentage}%</td>
-//     <td>${safeMissMap[d._id]}</td>
-//     <td data-label="Simulator" class="action-cell">
-//         <button class="action-btn" onclick="simulateAttend('${d._id}')">Attend</button>
-//         <button class="action-btn" onclick="simulateMiss('${d._id}')">Miss</button>
-//     </td>
-//     <td data-label="Target" class="target-cell">
-//         <div class="target-input-small">
-//         <input type="number" id="target-${d._id}" placeholder="%" />
-//         <button class="calc-btn" onclick="calculateTarget('${d._id}')">Calc</button>
-//         </div>
-//         <div class="target-result" id="result-${d._id}"></div>
-//     </td>
-//     `;
-
-//     table.appendChild(row);
-//   });
-
-//   // AGGREGATE DATA
-//   await loadAggregate();
-// }
 
 async function load() {
   const tbody = document.getElementById("tableBody");
@@ -217,7 +140,8 @@ async function simulateMiss(id) {
 }
 
 async function loadAggregate() {
-  const res = await fetch(API + "/attendance/aggregate");
+  // const res = await fetch(API + "/attendance/aggregate");
+  const res = await fetch(`${API}/aggregate?sessionId=${sessionId}`);
   const agg = await res.json();
 
   // Fill values
@@ -288,32 +212,6 @@ async function resetAttendance() {
   await load();
 }
 
-
-// function updateRow(d) {
-//   const rows = document.querySelectorAll("#table tr");
-
-//   rows.forEach(row => {
-//     if (row.dataset.id === d._id) {
-
-//       // Percentage (col 1)
-//       row.children[1].innerText = `${d.percentage}%`;
-
-//       // Safe miss (col 2)
-//       const min = 75;
-//       let m = Math.floor((100 * d.attended - min * d.total) / min);
-//       if (m < 0) m = 0;
-//       row.children[2].innerText = m;
-
-//       // Update color
-//       row.classList.remove("red", "yellow", "green");
-//       row.classList.add(
-//         d.percentage < 65 ? "red" :
-//         d.percentage < 75 ? "yellow" :
-//         "green"
-//       );
-//     }
-//   });
-// }
 
 function updateRow(d) {
   const rows = document.querySelectorAll("#tableBody tr");
@@ -423,3 +321,5 @@ function calculateTarget(id) {
   // 🎯 CASE 3: Exactly at target
   resultBox.innerText = "Exactly at target";
 }
+
+
