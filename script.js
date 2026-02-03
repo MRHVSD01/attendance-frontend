@@ -89,8 +89,8 @@ async function load() {
       </td>
 
       <td data-label="Simulator" class="action-cell">
-        <button class="action-btn" onclick="simulateAttend('${d._id}')">Attend</button>
-        <button class="action-btn" onclick="simulateMiss('${d._id}')">Miss</button>
+        <button class="action-btn" onclick="simulateAttend()">Attend</button>
+        <button class="action-btn" onclick="simulateMiss()">Miss</button>
       </td>
       <td data-label="Target" class="target-cell">
         <div class="target-input-small">
@@ -124,7 +124,7 @@ async function simulateAttend(id) {
 
   const updated = await res.json();
   updateRow(updated);
-  updateAggregateOnly();
+  await loadAggregate();
 }
 
 async function simulateMiss(id) {
@@ -136,7 +136,7 @@ async function simulateMiss(id) {
 
   const updated = await res.json();
   updateRow(updated);
-  updateAggregateOnly();
+  await loadAggregate();
 }
 
 async function loadAggregate() {
@@ -171,9 +171,37 @@ async function loadAggregate() {
   }
 }
 
+// async function calculateAggregateTarget() {
+//   const target = Number(document.getElementById("aggTarget").value);
+
+//   if (!target) {
+//     alert("Enter target percentage");
+//     return;
+//   }
+
+//   const res = await fetch(API + "/target/aggregate", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ target, sessionId }),
+//   });
+
+//   const data = await res.json();
+//   const box = document.getElementById("aggTargetResult");
+
+//   if (data.type === "invalid") {
+//     box.innerText = "Not achievable";
+//     box.style.color = "red";
+//   } else if (data.type === "attend") {
+//     box.innerText = `Attend ${data.value} more classes to reach ${target}%`;
+//     box.style.color = "blue";
+//   } else if (data.type === "miss") {
+//     box.innerText = `You can safely miss ${data.value} classes and maintain ${target}%`;
+//     box.style.color = "green";
+//   }
+// }
+
 async function calculateAggregateTarget() {
   const target = Number(document.getElementById("aggTarget").value);
-
   if (!target) {
     alert("Enter target percentage");
     return;
@@ -182,8 +210,7 @@ async function calculateAggregateTarget() {
   const res = await fetch(API + "/target/aggregate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ target }),
-    body: JSON.stringify({ sessionId }),
+    body: JSON.stringify({ target, sessionId }),
   });
 
   const data = await res.json();
@@ -201,6 +228,7 @@ async function calculateAggregateTarget() {
   }
 }
 
+
 async function resetAttendance() {
   const confirmReset = confirm(
     "This will reset attendance to the originally uploaded data. Continue?"
@@ -210,7 +238,10 @@ async function resetAttendance() {
 
   await fetch(API + "/attendance/reset", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sessionId }),
   });
+
 
   await load();
 }
@@ -246,31 +277,32 @@ function updateRow(d) {
 }
 
 
-async function updateAggregateOnly() {
-  const res = await fetch(API + "/attendance/aggregate");
-  const agg = await res.json();
+// async function updateAggregateOnly() {
+//   // const res = await fetch(API + "/attendance/aggregate");
+//   const res = await fetch(API + "/aggregate");
+//   const agg = await res.json();
 
-  document.getElementById("aggAttended").innerText = agg.totalAttended;
-  document.getElementById("aggTotal").innerText = agg.totalClasses;
-  document.getElementById("aggPercent").innerText = agg.percentage;
+//   document.getElementById("aggAttended").innerText = agg.totalAttended;
+//   document.getElementById("aggTotal").innerText = agg.totalClasses;
+//   document.getElementById("aggPercent").innerText = agg.percentage;
 
-  const section = document.querySelector(".aggregate-section");
-  const circle = document.getElementById("aggCircle");
+//   const section = document.querySelector(".aggregate-section");
+//   const circle = document.getElementById("aggCircle");
 
-  section.className = "aggregate-section";
-  circle.className = "circle";
+//   section.className = "aggregate-section";
+//   circle.className = "circle";
 
-  if (agg.riskLevel === "GREEN") {
-    section.classList.add("agg-green");
-    circle.classList.add("green");
-  } else if (agg.riskLevel === "YELLOW") {
-    section.classList.add("agg-yellow");
-    circle.classList.add("yellow");
-  } else {
-    section.classList.add("agg-red");
-    circle.classList.add("red");
-  }
-}
+//   if (agg.riskLevel === "GREEN") {
+//     section.classList.add("agg-green");
+//     circle.classList.add("green");
+//   } else if (agg.riskLevel === "YELLOW") {
+//     section.classList.add("agg-yellow");
+//     circle.classList.add("yellow");
+//   } else {
+//     section.classList.add("agg-red");
+//     circle.classList.add("red");
+//   }
+// }
 
 function calculateTarget(id) {
   const input = document.getElementById(`target-${id}`);
