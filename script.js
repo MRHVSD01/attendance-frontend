@@ -89,8 +89,9 @@ async function load() {
       </td>
 
       <td data-label="Simulator" class="action-cell">
-        <button class="action-btn" onclick="simulateAttend(${d._id})">Attend</button>
-        <button class="action-btn" onclick="simulateMiss(${d._id})">Miss</button>
+        <button class="action-btn attend-btn" data-id="${d._id}">Attend</button>
+        <button class="action-btn miss-btn" data-id="${d._id}">Miss</button>
+
       </td>
       <td data-label="Target" class="target-cell">
         <div class="target-input-small">
@@ -102,6 +103,14 @@ async function load() {
     `;
 
     tbody.appendChild(row);
+    row.querySelector(".attend-btn").addEventListener("click", () => {
+      simulateAttend(d._id);
+    });
+
+    row.querySelector(".miss-btn").addEventListener("click", () => {
+      simulateMiss(d._id);
+    });
+
   });
 
   await loadAggregate();
