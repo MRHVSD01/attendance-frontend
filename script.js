@@ -126,37 +126,79 @@ const API = "https://attendance-backend-production-8499.up.railway.app/api";
 //   }
 // }
 
+// async function pasteAndSubmit() {
+//   try {
+//     // 🔐 Read clipboard (requires user click)
+//     const raw = await navigator.clipboard.readText();
+//     const text = raw.trim();
+
+
+//     const btn = document.querySelector(".paste-btn");
+//     btn.disabled = true;
+//     btn.innerText = "Processing…";
+
+//     if (!text || text.trim().length < 20) {
+//       alert("Clipboard is empty or does not contain attendance data.");
+//       return;
+//     }
+
+//     // Show fullscreen loader
+//     document.getElementById("fullscreenLoader").classList.remove("hidden");
+
+//     const formData = new FormData();
+//     formData.append("text", text);
+//     formData.append("sessionId", sessionId);
+
+//     // await fetch(API + "/upload", {
+//     //   method: "POST",
+//     //   body: formData,
+//     // });
+
+//     const controller = new AbortController();
+//     const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s
+
+//     await fetch(API + "/upload", {
+//       method: "POST",
+//       body: formData,
+//       signal: controller.signal,
+//     });
+
+//     clearTimeout(timeoutId);
+
+//     // Redirect on success
+//     window.location.href = "dashboard.html";
+//   } catch (err) {
+//     console.error("Clipboard error:", err);
+//     alert("Unable to read clipboard. Please allow clipboard access.");
+
+//     document.getElementById("fullscreenLoader").classList.add("hidden");
+//   }
+// }
+
 async function pasteAndSubmit() {
+  const btn = document.querySelector(".paste-btn");
+
   try {
-    // 🔐 Read clipboard (requires user click)
     const raw = await navigator.clipboard.readText();
-    const text = raw.replace(/\s+/g, " ").trim(); // compress payload
+    const text = raw.trim();
 
-    const btn = document.querySelector(".paste-btn");
-    btn.disabled = true;
-    btn.innerText = "Processing…";
-
-    if (!text || text.trim().length < 20) {
-      alert("Clipboard is empty or does not contain attendance data.");
+    if (!text || text.length < 50) {
+      alert("Clipboard does not contain valid attendance data.");
       return;
     }
 
-    // Show fullscreen loader
+    btn.disabled = true;
+    btn.innerText = "Processing…";
     document.getElementById("fullscreenLoader").classList.remove("hidden");
 
     const formData = new FormData();
     formData.append("text", text);
     formData.append("sessionId", sessionId);
 
-    // await fetch(API + "/upload", {
-    //   method: "POST",
-    //   body: formData,
-    // });
-
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
 
-    await fetch(API + "/upload", {
+    const res = await fetch(API + "/upload", {
       method: "POST",
       body: formData,
       signal: controller.signal,
@@ -164,15 +206,27 @@ async function pasteAndSubmit() {
 
     clearTimeout(timeoutId);
 
-    // Redirect on success
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Upload failed");
+    }
+
     window.location.href = "dashboard.html";
   } catch (err) {
-    console.error("Clipboard error:", err);
-    alert("Unable to read clipboard. Please allow clipboard access.");
+    console.error("Upload error:", err);
+
+    alert(
+      "Attendance upload failed.\n" +
+      "Please check ERP format or try again on stable network."
+    );
 
     document.getElementById("fullscreenLoader").classList.add("hidden");
+    btn.disabled = false;
+    btn.innerText = "Paste Attendance & Calculate";
   }
 }
+
 
 async function load() {
   const tbody = document.getElementById("tableBody");
@@ -770,3 +824,13 @@ function calculateWhatIf() {
 
   updateAggregateUI(simulatedAggregate);
 }
+
+
+// async function safeFetch(url, options, retries = 1) {
+//   try {
+//     return await fetch(url, options);
+//   } catch {
+//     if (retries > 0) return safeFetch(url, options, retries - 1);
+//     throw new Error("Network error");
+//   }
+// }
