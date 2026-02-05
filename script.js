@@ -43,6 +43,51 @@ const API = "https://attendance-backend-production-8499.up.railway.app/api";
 //   window.location.href = "dashboard.html";
 // }
 
+// async function submitData() {
+//   const pastedText = document.getElementById("pasteBox").value;
+//   const file = document.getElementById("file").files[0];
+
+//   if (!pastedText && !file) {
+//     alert("Paste ERP report or upload file");
+//     return;
+//   }
+
+//   // 🔥 SHOW LOADER
+//   document.getElementById("loader").classList.remove("hidden");
+
+//   // Disable button to prevent double click
+//   const btn = document.querySelector(".primary-btn");
+//   btn.disabled = true;
+//   btn.innerText = "Processing...";
+
+//   const formData = new FormData();
+
+//   if (pastedText) {
+//     formData.append("text", pastedText);
+//   } else {
+//     formData.append("file", file);
+//   }
+
+//   formData.append("sessionId", sessionId);
+
+//   try {
+//     await fetch(API + "/upload", {
+//       method: "POST",
+//       body: formData,
+//     });
+
+//     // Redirect after successful upload
+//     window.location.href = "dashboard.html";
+//   } catch (err) {
+//     alert("Something went wrong. Please try again.");
+
+//     // Restore UI if error
+//     document.getElementById("loader").classList.add("hidden");
+//     btn.disabled = false;
+//     btn.innerText = "Process Attendance";
+//   }
+// }
+
 async function submitData() {
   const pastedText = document.getElementById("pasteBox").value;
   const file = document.getElementById("file").files[0];
@@ -52,13 +97,8 @@ async function submitData() {
     return;
   }
 
-  // 🔥 SHOW LOADER
-  document.getElementById("loader").classList.remove("hidden");
-
-  // Disable button to prevent double click
-  const btn = document.querySelector(".primary-btn");
-  btn.disabled = true;
-  btn.innerText = "Processing...";
+  // 🔥 SHOW FULLSCREEN LOADER
+  document.getElementById("fullscreenLoader").classList.remove("hidden");
 
   const formData = new FormData();
 
@@ -76,15 +116,13 @@ async function submitData() {
       body: formData,
     });
 
-    // Redirect after successful upload
+    // Redirect on success
     window.location.href = "dashboard.html";
   } catch (err) {
     alert("Something went wrong. Please try again.");
 
-    // Restore UI if error
-    document.getElementById("loader").classList.add("hidden");
-    btn.disabled = false;
-    btn.innerText = "Process Attendance";
+    // Hide loader if error
+    document.getElementById("fullscreenLoader").classList.add("hidden");
   }
 }
 
