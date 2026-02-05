@@ -88,29 +88,61 @@ const API = "https://attendance-backend-production-8499.up.railway.app/api";
 //   }
 // }
 
-async function submitData() {
-  const pastedText = document.getElementById("pasteBox").value;
-  const file = document.getElementById("file").files[0];
+// async function submitData() {
+//   const pastedText = document.getElementById("pasteBox").value;
+//   const file = document.getElementById("file").files[0];
 
-  if (!pastedText && !file) {
-    alert("Paste ERP report or upload file");
-    return;
-  }
+//   if (!pastedText && !file) {
+//     alert("Paste ERP report or upload file");
+//     return;
+//   }
 
-  // 🔥 SHOW FULLSCREEN LOADER
-  document.getElementById("fullscreenLoader").classList.remove("hidden");
+//   // 🔥 SHOW FULLSCREEN LOADER
+//   document.getElementById("fullscreenLoader").classList.remove("hidden");
 
-  const formData = new FormData();
+//   const formData = new FormData();
 
-  if (pastedText) {
-    formData.append("text", pastedText);
-  } else {
-    formData.append("file", file);
-  }
+//   if (pastedText) {
+//     formData.append("text", pastedText);
+//   } else {
+//     formData.append("file", file);
+//   }
 
-  formData.append("sessionId", sessionId);
+//   formData.append("sessionId", sessionId);
 
+//   try {
+//     await fetch(API + "/upload", {
+//       method: "POST",
+//       body: formData,
+//     });
+
+//     // Redirect on success
+//     window.location.href = "dashboard.html";
+//   } catch (err) {
+//     alert("Something went wrong. Please try again.");
+
+//     // Hide loader if error
+//     document.getElementById("fullscreenLoader").classList.add("hidden");
+//   }
+// }
+
+async function pasteAndSubmit() {
   try {
+    // 🔐 Read clipboard (requires user click)
+    const text = await navigator.clipboard.readText();
+
+    if (!text || text.trim().length < 20) {
+      alert("Clipboard is empty or does not contain attendance data.");
+      return;
+    }
+
+    // Show fullscreen loader
+    document.getElementById("fullscreenLoader").classList.remove("hidden");
+
+    const formData = new FormData();
+    formData.append("text", text);
+    formData.append("sessionId", sessionId);
+
     await fetch(API + "/upload", {
       method: "POST",
       body: formData,
@@ -119,9 +151,9 @@ async function submitData() {
     // Redirect on success
     window.location.href = "dashboard.html";
   } catch (err) {
-    alert("Something went wrong. Please try again.");
+    console.error("Clipboard error:", err);
+    alert("Unable to read clipboard. Please allow clipboard access.");
 
-    // Hide loader if error
     document.getElementById("fullscreenLoader").classList.add("hidden");
   }
 }

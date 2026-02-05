@@ -25,19 +25,28 @@
 
       <!-- Main Upload Card -->
       <section class="upload-card">
-        <h2>Upload Attendance Report</h2>
+        <!-- <h2>Upload Attendance Report</h2>
 
         <p class="instruction">
           You can either <strong>paste</strong> the attendance report copied
           from ERP or <strong>upload</strong> the official CSV file.
-        </p>
+        </p> -->
 
         <!-- Paste Box -->
-        <label class="section-label">Paste ERP Attendance Report</label>
+        <!-- <label class="section-label">Paste ERP Attendance Report</label>
         <textarea
           id="pasteBox"
           placeholder="Paste the attendance report here..."
-        ></textarea>
+        ></textarea> -->
+
+        <!-- Paste from Clipboard -->
+        <button class="primary-btn" onclick="pasteAndSubmit()">
+          Paste Attendance & Calculate
+        </button>
+
+        <p class="note">
+          Copy the attendance report from ERP, then click the button above.
+        </p>
 
         <div class="divider">OR</div>
 
