@@ -94,6 +94,9 @@
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js">
+         fetch("https://attendance-backend-production-8499.up.railway.app/api/attendance?sessionId=ping")
+      .catch(() => {});
+    </script>
   </body>
 </html>
