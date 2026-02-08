@@ -39,13 +39,13 @@ No frontend frameworks are used.
 ## 📂 Frontend Folder Structure
 
 attendance-frontend/
-│
-├── index.html # Upload / paste attendance page
-├── dashboard.html # Attendance dashboard
-├── style.css # Complete styling
-├── script.js # All frontend logic & API calls
-├── assets/ # Icons / images (if any)
-└── README.md
+- │
+- ├── index.html # Upload / paste attendance page
+- ├── dashboard.html # Attendance dashboard
+- ├── style.css # Complete styling
+- ├── script.js # All frontend logic & API calls
+- ├── assets/ # Icons / images (if any)
+- └── README.md
 
 
 ---
@@ -56,13 +56,13 @@ The frontend connects to a separate backend server hosted on **Railway**.
 
 All API calls are made using:
 
-/api/upload
-/api/attendance
-/api/aggregate
-/api/simulate/attend
-/api/simulate/miss
-/api/target/aggregate
-/api/reset
+- /api/upload
+- /api/attendance
+- /api/aggregate
+- /api/simulate/attend
+- /api/simulate/miss
+- /api/target/aggregate
+- /api/reset
 
 ## 👥 Multi-User Support
 
