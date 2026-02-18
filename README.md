@@ -10,7 +10,10 @@ It is responsible for the user interface, dashboard, and all user interactions.
 
 ## 📌 About the Project
 
-This website helps college students calculate and manage their attendance using the **official ERP attendance report**.
+I built a full-stack attendance calculator where students can upload or paste their ERP attendance report.
+The system calculates subject-wise and overall attendance automatically.
+It also allows them to simulate future scenarios — like if they attend or miss upcoming classes — and instantly shows how their percentage will change.
+Additionally, it tells them how many classes they need to attend to reach a target percentage like 75%, or how many they can safely miss.
 
 Students can:
 - Paste or upload attendance report
