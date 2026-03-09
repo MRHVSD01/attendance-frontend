@@ -10,7 +10,9 @@ if (!sessionId) {
 }
 
 // const API = "http://localhost:5000/api";
-const API = "https://attendance-backend-production-8499.up.railway.app/api";
+// const API = "https://attendance-backend-production-8499.up.railway.app/api";
+const API = "https://attendance-backend-4e2h.onrender.com";
+
 
 // async function submitData() {
 //   const pastedText = document.getElementById("pasteBox").value;
